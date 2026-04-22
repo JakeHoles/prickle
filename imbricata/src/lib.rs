@@ -1,14 +1,16 @@
 extern crate anyhow;
-extern crate cpal;
+use anyhow::Result;
 
-use anyhow::{Result};
+extern crate cpal;
 use cpal::{
+    Sample,
     traits::{DeviceTrait, HostTrait, StreamTrait},
-    Sample
 };
 
-pub fn host_device_setup(
-) -> Result<(cpal::Host, cpal::Device, cpal::StreamConfig), anyhow::Error> {
+mod audio_buffer_ring;
+
+pub fn host_device_setup() -> Result<(cpal::Host, cpal::Device, cpal::StreamConfig), anyhow::Error>
+{
     let host = cpal::default_host();
 
     let device = host
@@ -24,7 +26,9 @@ pub fn host_device_setup(
 
 pub fn play_beep() -> Result<()> {
     let host = cpal::default_host();
-    let device = host.default_output_device().expect("failed to find output device");
+    let device = host
+        .default_output_device()
+        .expect("failed to find output device");
 
     let config: cpal::StreamConfig = device.default_output_config().unwrap().into();
     println!("Default output config: {config:?}");
@@ -73,6 +77,5 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-    }
+    fn it_works() {}
 }
